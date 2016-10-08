@@ -67,6 +67,9 @@ export class SearchkitManager {
       searchOnLoad:true
     })
     this.host = host
+    if({}.hasOwnProperty.call(options, "location")){
+          this.searchedLocation = options.location;
+        }
 
     this.transport = this.options.transport || new AxiosESTransport(host, {
       headers:this.options.httpHeaders,
@@ -75,7 +78,7 @@ export class SearchkitManager {
     })
     this.accessors = new AccessorManager()
 		this.registrationCompleted = new Promise((resolve)=>{
-			this.completeRegistration = resolve
+			this.completeRegistration = resolve()
 		})
     this.translateFunction = constant(undefined)
     this.queryProcessor = identity
@@ -137,6 +140,23 @@ export class SearchkitManager {
     let callsBeforeListen = (this.options.searchOnLoad) ? 1: 2
 
     this._unlistenHistory = this.history.listen(after(callsBeforeListen,(location)=>{
+      if({}.hasOwnProperty.call(location.query, "location")){
+          var urlParts = location.pathname.split('/');
+          var cityNameInUrl;
+          var removeCityNameInUrlFlag = false;
+          if(urlParts.length === 5){
+            cityNameInUrl = urlParts[4];
+            if(!location.query.location.includes(cityNameInUrl)){
+              urlParts.pop(cityNameInUrl);
+              location.pathname = urlParts.join('/');
+            }
+          }
+        }
+        if(!{}.hasOwnProperty.call(location.query, "location")){
+          if({}.hasOwnProperty.call(_this, "searchedLocation")){
+            location.query.location = _this.searchedLocation;
+          }
+        }
       //action is POP when the browser modified
       if(location.action === "POP") {
         this.registrationCompleted.then(()=>{
