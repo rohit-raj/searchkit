@@ -9,7 +9,7 @@ echo "Type enter when you have updated the CHANGELOG.md for ${newVersion}"
 read proceed
 
 echo "Running npm prepublish"
-npm run-script prepublish
+sudo npm run-script prepublish
 
 echo "Type enter to commit and tag"
 read proceed

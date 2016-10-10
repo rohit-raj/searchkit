@@ -25,7 +25,8 @@ export interface SearchkitOptions {
   httpHeaders?:Object,
   basicAuth?:string,
   transport?:ESTransport,
-  searchUrlPath?:string
+  searchUrlPath?:string,
+  location?:Array<1>,
 }
 
 export class SearchkitManager {
@@ -48,6 +49,7 @@ export class SearchkitManager {
   initialLoading:boolean
   error:any
   results:any
+  searchedLocation:Array<1>
   VERSION = VERSION
   static VERSION = VERSION
 
@@ -68,8 +70,8 @@ export class SearchkitManager {
     })
     this.host = host
     if({}.hasOwnProperty.call(options, "location")){
-          this.searchedLocation = options.location;
-        }
+      this.searchedLocation = options.location;
+    }
 
     this.transport = this.options.transport || new AxiosESTransport(host, {
       headers:this.options.httpHeaders,
@@ -153,8 +155,8 @@ export class SearchkitManager {
           }
         }
         if(!{}.hasOwnProperty.call(location.query, "location")){
-          if({}.hasOwnProperty.call(_this, "searchedLocation")){
-            location.query.location = _this.searchedLocation;
+          if({}.hasOwnProperty.call(this, "searchedLocation")){
+            location.query.location = this.searchedLocation;
           }
         }
       //action is POP when the browser modified
